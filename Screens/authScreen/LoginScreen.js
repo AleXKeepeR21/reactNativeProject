@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
+  ImageBackground,
 } from "react-native";
 
 import { useFonts } from "expo-font";
@@ -48,51 +49,61 @@ export default function LoginScreen({ navigation }) {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container} onLayout={onLayoutRootView}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS == "ios" ? "padding" : "height"}
+        <ImageBackground
+          style={styles.image}
+          source={require("../../assets/images/PhotoBG.png")}
         >
-          <Text style={styles.formTitle}>Увійти</Text>
-          <View style={styles.form}>
-            <View style={{ marginTop: 32 }}>
-              <TextInput
-                style={styles.input}
-                textAlign={"left"}
-                placeholder="Адреса електроної пошти"
-                value={state.email}
-                onChangeText={(value) =>
-                  setState((prevState) => ({ ...prevState, email: value }))
-                }
-              />
+          <KeyboardAvoidingView
+            behavior={Platform.OS == "ios" ? "padding" : "height"}
+          >
+            <View style={styles.formWrap}>
+              <Text style={styles.formTitle}>Увійти</Text>
+              <View style={styles.form}>
+                <View style={{ marginTop: 32 }}>
+                  <TextInput
+                    style={styles.input}
+                    textAlign={"left"}
+                    placeholder="Адреса електроної пошти"
+                    value={state.email}
+                    onChangeText={(value) =>
+                      setState((prevState) => ({ ...prevState, email: value }))
+                    }
+                  />
+                </View>
+                <View style={{ marginTop: 16 }}>
+                  <TextInput
+                    style={styles.input}
+                    textAlign={"left"}
+                    secureTextEntry={true}
+                    placeholder="Пароль"
+                    value={state.password}
+                    onChangeText={(value) =>
+                      setState((prevState) => ({
+                        ...prevState,
+                        password: value,
+                      }))
+                    }
+                  />
+                </View>
+                <TouchableOpacity
+                  activeOpacity={0.5}
+                  style={styles.formButton}
+                  onPress={keyboardHide}
+                >
+                  <Text style={styles.textButton}>Увійти</Text>
+                </TouchableOpacity>
+                <View>
+                  <Text style={styles.loginForm}>Немає облікового запису?</Text>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("Registration")}
+                  >
+                    <Text style={styles.regForm}>Зареєструватись</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
-            <View style={{ marginTop: 16 }}>
-              <TextInput
-                style={styles.input}
-                textAlign={"left"}
-                secureTextEntry={true}
-                placeholder="Пароль"
-                value={state.password}
-                onChangeText={(value) =>
-                  setState((prevState) => ({ ...prevState, password: value }))
-                }
-              />
-            </View>
-            <TouchableOpacity
-              activeOpacity={0.5}
-              style={styles.formButton}
-              onPress={keyboardHide}
-            >
-              <Text style={styles.textButton}>Увійти</Text>
-            </TouchableOpacity>
-            <View>
-              <Text style={styles.loginForm}>Немає облікового запису?</Text>
-              <TouchableOpacity
-                onPress={() => navigation.navigate("Registration")}
-              >
-                <Text style={styles.regForm}>Зареєструватись</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </KeyboardAvoidingView>
+          </KeyboardAvoidingView>
+        </ImageBackground>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -102,6 +113,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+    justifyContent: "center",
+  },
+  image: {
+    flex: 1,
+    resizeMode: "cover",
     justifyContent: "center",
   },
   input: {
@@ -114,6 +130,12 @@ const styles = StyleSheet.create({
     padding: 16,
     placeholderTextColor: "#BDBDBD",
     fontFamily: "Roboto-Regular",
+  },
+  formWrap: {
+    backgroundColor: "#fff",
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    // height: 490,
   },
   form: {
     marginHorizontal: 16,
