@@ -15,6 +15,9 @@ import {
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 
+import { useDispatch } from "react-redux";
+import { authSignUpUser } from "../../redux/auth/authOperation";
+
 const initialState = {
   login: "",
   email: "",
@@ -26,8 +29,11 @@ SplashScreen.preventAutoHideAsync();
 export default function RegistrationScreen({ navigation }) {
   const [state, setState] = useState(initialState);
 
-  const keyboardHide = () => {
-    console.log(state);
+  const dispatch = useDispatch();
+
+  const handleSubmit = () => {
+    // console.log(state);
+    dispatch(authSignUpUser(state));
     Keyboard.dismiss();
     setState(initialState);
   };
@@ -56,7 +62,6 @@ export default function RegistrationScreen({ navigation }) {
           <Text style={styles.formTitle}>Реєстрація</Text>
           <View style={styles.form}>
             <View style={{ marginTop: 32 }}>
-              {/* <Text style={styles.inputTitle}>Логін</Text> */}
               <TextInput
                 style={styles.input}
                 textAlign={"left"}
@@ -68,7 +73,6 @@ export default function RegistrationScreen({ navigation }) {
               />
             </View>
             <View style={{ marginTop: 16 }}>
-              {/* <Text style={styles.inputTitle}>Адреса електроної пошти</Text> */}
               <TextInput
                 style={styles.input}
                 textAlign={"left"}
@@ -80,7 +84,6 @@ export default function RegistrationScreen({ navigation }) {
               />
             </View>
             <View style={{ marginTop: 16 }}>
-              {/* <Text style={styles.inputTitle}>Пароль</Text> */}
               <TextInput
                 style={styles.input}
                 textAlign={"left"}
@@ -95,7 +98,7 @@ export default function RegistrationScreen({ navigation }) {
             <TouchableOpacity
               activeOpacity={0.5}
               style={styles.formButton}
-              onPress={keyboardHide}
+              onPress={handleSubmit}
             >
               <Text style={styles.textButton}>Зареєструватись</Text>
             </TouchableOpacity>
