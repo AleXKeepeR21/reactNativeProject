@@ -1,5 +1,4 @@
 import React from "react";
-// import { Button } from "react-native";
 
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -50,24 +49,6 @@ export const useRoute = (isAuth) => {
               backgroundColor="#171F33"
             />
           ),
-        }}
-        name="Posts"
-        component={PostsScreen}
-      />
-      <MainTab.Screen
-        options={{
-          tabBarIcon: ({ focused, color, size }) => (
-            <AntDesign name="pluscircle" size={34} color="#FF6C00" />
-          ),
-        }}
-        name="CreatePost"
-        component={CreatePostsScreen}
-      />
-      <MainTab.Screen
-        options={{
-          tabBarIcon: ({ focused, color, size }) => (
-            <Feather name="user" size={24} color="#212121CC" />
-          ),
           headerTitleAlign: "center",
           title: "Публікації",
           headerStyle: {
@@ -79,12 +60,47 @@ export const useRoute = (isAuth) => {
             fontSize: 17,
           },
           headerRight: () => (
-            // <Button
-            //   onPress={() => alert("This is a button!")}
-            //   title="Press me"
-            //   color="#fff"
-            // />
-
+            <MaterialIcons name="logout" size={24} color="#BDBDBD" />
+          ),
+        }}
+        name="Posts"
+        component={PostsScreen}
+      />
+      <MainTab.Screen
+        options={{
+          tabBarIcon: ({ focused, color, size }) => (
+            <AntDesign name="pluscircle" size={34} color="#FF6C00" />
+          ),
+          headerTitleAlign: "center",
+          title: "Створити публікацію",
+          headerStyle: {
+            backgroundColor: "#FFFFFF",
+          },
+          headerTintColor: "#212121",
+          headerTitleStyle: {
+            fontWeight: "500",
+            fontSize: 17,
+          },
+        }}
+        name="CreatePost"
+        component={CreatePostsScreen}
+      />
+      <MainTab.Screen
+        options={{
+          tabBarIcon: ({ focused, color, size }) => (
+            <Feather name="user" size={24} color="#212121CC" />
+          ),
+          headerTitleAlign: "center",
+          title: "Профіль",
+          headerStyle: {
+            backgroundColor: "#FFFFFF",
+          },
+          headerTintColor: "#212121",
+          headerTitleStyle: {
+            fontWeight: "500",
+            fontSize: 17,
+          },
+          headerRight: () => (
             <MaterialIcons name="logout" size={24} color="#BDBDBD" />
           ),
         }}
