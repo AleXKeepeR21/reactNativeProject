@@ -1,63 +1,3 @@
-// import React, { useState } from "react";
-// import { Camera } from "expo-camera";
-// import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-
-// import { MaterialIcons } from "@expo/vector-icons";
-
-// const CreatePostsScreen = () => {
-//   const [camera, setCamera] = useState(null);
-//   const [photo, setPhoto] = useState("");
-
-//   const takePhoto = async () => {
-//     const photo = await camera.takePictureAsync();
-//     setPhoto(photo.uri);
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       <Camera style={styles.camera} ref={setCamera}>
-//         <View>
-//           <Image source={{ url: photo }} />
-//         </View>
-//         <TouchableOpacity onPress={takePhoto} style={styles.cameraWrap}>
-//           {/* <Entypo name="instagram-with-circle" size={24} color="#BDBDBD" /> */}
-//           <MaterialIcons name="photo-camera" size={24} color="#BDBDBD" />
-//           {/* <Text style={styles.cameraTitle}>ппп</Text> */}
-//         </TouchableOpacity>
-//       </Camera>
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     // justifyContent: "center",
-//     // alignItems: "center",
-//   },
-//   camera: {
-//     marginTop: 32,
-//     height: 240,
-//     marginHorizontal: 16,
-//     justifyContent: "center",
-//     alignItems: "center",
-//   },
-//   cameraWrap: {
-//     borderWidth: 1,
-//     backgroundColor: "#FFFFFF",
-//     width: 60,
-//     height: 60,
-//     borderRadius: 50,
-//     justifyContent: "center",
-//     alignItems: "center",
-//   },
-//   cameraTitle: {
-//     color: "black",
-//   },
-// });
-
-// export default CreatePostsScreen;
-
 import React, { useState, useEffect } from "react";
 import {
   Text,
@@ -66,6 +6,7 @@ import {
   StyleSheet,
   Image,
   Dimensions,
+  TextInput,
 } from "react-native";
 import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
@@ -74,12 +15,22 @@ import * as Location from "expo-location";
 
 import { MaterialIcons } from "@expo/vector-icons";
 
-export default function Home({ navigation }) {
+import { db } from "../../firebase/config";
+import "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { doc, setDoc } from "firebase/firestore";
+import { useSelector } from "react-redux";
+
+export default function Home({ route, navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [photo, setPhoto] = useState("");
+  const [comment, setComment] = useState("");
   const [location, setLocation] = useState(null);
+
+  const storage = getStorage();
+  const { userId, login } = useSelector((state) => state.auth);
 
   useEffect(() => {
     (async () => {
@@ -106,21 +57,50 @@ export default function Home({ navigation }) {
   const takePhoto = async () => {
     if (cameraRef) {
       const { uri } = await cameraRef.takePictureAsync();
-      let location = await Location.getCurrentPositionAsync({});
+      let locationRef = await Location.getCurrentPositionAsync({});
       const coords = {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
+        latitude: locationRef.coords.latitude,
+        longitude: locationRef.coords.longitude,
       };
       setLocation(coords);
-      console.log("latitude", location.coords.latitude);
-      console.log("longitude", location.coords.longitude);
       setPhoto(uri);
-      console.log("photo", photo);
     }
   };
 
   const sendPhoto = () => {
-    navigation.navigate("Home", { photo });
+    uploadPostsToServer();
+    navigation.navigate("Home");
+  };
+
+  const uploadPostsToServer = async () => {
+    const photo = await uploadPhotoToServer();
+    // const createPosts = await db
+    //   .firestore()
+    //   .collection("posts")
+    //   .add({ photo, comment, location: location.coords, userId, login });
+
+    const uniquePostId = Date.now().toString();
+    // const photo = await uploadPhoto();
+    await setDoc(doc(db, "posts", `${uniquePostId}`), {
+      photo: photo,
+      location: location,
+      // headers: pictureHeaders,
+      login: login,
+      userId: userId,
+      // commentsCount: 0,
+      // comment: comment,
+    });
+  };
+
+  const uploadPhotoToServer = async () => {
+    const response = await fetch(`${photo}`);
+    const file = await response.blob();
+
+    const uniquePostId = Date.now().toString();
+    const imageRef = await ref(storage, `photos/${uniquePostId}`);
+    await uploadBytes(imageRef, file);
+
+    return await getDownloadURL(imageRef);
   };
 
   return (
@@ -158,7 +138,21 @@ export default function Home({ navigation }) {
           </TouchableOpacity>
         </View>
       </Camera>
-
+      <View>
+        <Text
+          style={{
+            fontSize: 14,
+            marginLeft: 16,
+            marginTop: 8,
+            color: "#BDBDBD",
+          }}
+        >
+          Редагувати фото
+        </Text>
+      </View>
+      <View style={styles.inputContainer}>
+        <TextInput style={styles.input} onChangeText={setComment} />
+      </View>
       <View>
         <TouchableOpacity
           activeOpacity={0.5}
@@ -248,5 +242,17 @@ const styles = StyleSheet.create({
   mapStyle: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
+  },
+  input: {
+    fontSize: 16,
+    color: "#212121",
+    height: 50,
+    borderWidth: 1,
+    borderColor: "transparent",
+    borderBottomColor: "#E8E8E8",
+  },
+  inputContainer: {
+    marginTop: 32,
+    marginHorizontal: 16,
   },
 });

@@ -12,8 +12,11 @@ import {
   ImageBackground,
 } from "react-native";
 
+import { useDispatch } from "react-redux";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+
+import { authSignInUser } from "../../redux/auth/authOperation";
 
 const initialState = {
   email: "",
@@ -25,9 +28,11 @@ SplashScreen.preventAutoHideAsync();
 export default function LoginScreen({ navigation }) {
   const [state, setState] = useState(initialState);
 
-  const keyboardHide = () => {
-    console.log(state);
+  const dispatch = useDispatch();
+
+  const handleSumit = () => {
     Keyboard.dismiss();
+    dispatch(authSignInUser(state));
     setState(initialState);
   };
 
@@ -88,7 +93,7 @@ export default function LoginScreen({ navigation }) {
                 <TouchableOpacity
                   activeOpacity={0.5}
                   style={styles.formButton}
-                  onPress={keyboardHide}
+                  onPress={handleSumit}
                 >
                   <Text style={styles.textButton}>Увійти</Text>
                 </TouchableOpacity>
@@ -135,7 +140,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
-    // height: 490,
+    borderBottomLeftRadius: 25,
+    borderBottomRightRadius: 25,
+    height: 350,
   },
   form: {
     marginHorizontal: 16,

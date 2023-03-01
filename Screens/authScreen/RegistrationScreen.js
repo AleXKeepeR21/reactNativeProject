@@ -32,7 +32,6 @@ export default function RegistrationScreen({ navigation }) {
   const dispatch = useDispatch();
 
   const handleSubmit = () => {
-    // console.log(state);
     dispatch(authSignUpUser(state));
     Keyboard.dismiss();
     setState(initialState);
@@ -56,57 +55,63 @@ export default function RegistrationScreen({ navigation }) {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container} onLayout={onLayoutRootView}>
+        <ImageBackground
+          style={styles.image}
+          source={require("../../assets/images/PhotoBG.png")}
+        ></ImageBackground>
         <KeyboardAvoidingView
           behavior={Platform.OS == "ios" ? "padding" : "height"}
         >
-          <Text style={styles.formTitle}>Реєстрація</Text>
-          <View style={styles.form}>
-            <View style={{ marginTop: 32 }}>
-              <TextInput
-                style={styles.input}
-                textAlign={"left"}
-                placeholder="Логін"
-                value={state.login}
-                onChangeText={(value) =>
-                  setState((prevState) => ({ ...prevState, login: value }))
-                }
-              />
-            </View>
-            <View style={{ marginTop: 16 }}>
-              <TextInput
-                style={styles.input}
-                textAlign={"left"}
-                placeholder="Адреса електроної пошти"
-                value={state.email}
-                onChangeText={(value) =>
-                  setState((prevState) => ({ ...prevState, email: value }))
-                }
-              />
-            </View>
-            <View style={{ marginTop: 16 }}>
-              <TextInput
-                style={styles.input}
-                textAlign={"left"}
-                secureTextEntry={true}
-                placeholder="Пароль"
-                value={state.password}
-                onChangeText={(value) =>
-                  setState((prevState) => ({ ...prevState, password: value }))
-                }
-              />
-            </View>
-            <TouchableOpacity
-              activeOpacity={0.5}
-              style={styles.formButton}
-              onPress={handleSubmit}
-            >
-              <Text style={styles.textButton}>Зареєструватись</Text>
-            </TouchableOpacity>
-            <View>
-              <Text style={styles.regForm}>Вже є обліковий запис?</Text>
-              <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-                <Text style={styles.loginForm}>Увійти</Text>
+          <View style={styles.formWrap}>
+            <Text style={styles.formTitle}>Реєстрація</Text>
+            <View style={styles.form}>
+              <View style={{ marginTop: 32 }}>
+                <TextInput
+                  style={styles.input}
+                  textAlign={"left"}
+                  placeholder="Логін"
+                  value={state.login}
+                  onChangeText={(value) =>
+                    setState((prevState) => ({ ...prevState, login: value }))
+                  }
+                />
+              </View>
+              <View style={{ marginTop: 16 }}>
+                <TextInput
+                  style={styles.input}
+                  textAlign={"left"}
+                  placeholder="Адреса електроної пошти"
+                  value={state.email}
+                  onChangeText={(value) =>
+                    setState((prevState) => ({ ...prevState, email: value }))
+                  }
+                />
+              </View>
+              <View style={{ marginTop: 16 }}>
+                <TextInput
+                  style={styles.input}
+                  textAlign={"left"}
+                  secureTextEntry={true}
+                  placeholder="Пароль"
+                  value={state.password}
+                  onChangeText={(value) =>
+                    setState((prevState) => ({ ...prevState, password: value }))
+                  }
+                />
+              </View>
+              <TouchableOpacity
+                activeOpacity={0.5}
+                style={styles.formButton}
+                onPress={handleSubmit}
+              >
+                <Text style={styles.textButton}>Зареєструватись</Text>
               </TouchableOpacity>
+              <View>
+                <Text style={styles.regForm}>Вже є обліковий запис?</Text>
+                <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                  <Text style={styles.loginForm}>Увійти</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </KeyboardAvoidingView>
@@ -121,6 +126,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     justifyContent: "center",
   },
+  image: {
+    // flex: 1,
+    resizeMode: "cover",
+    justifyContent: "center",
+  },
   input: {
     fontSize: 16,
     backgroundColor: "#F6F6F6",
@@ -131,6 +141,14 @@ const styles = StyleSheet.create({
     padding: 16,
     placeholderTextColor: "#BDBDBD",
     fontFamily: "Roboto-Regular",
+  },
+  formWrap: {
+    backgroundColor: "#fff",
+    // borderTopLeftRadius: 25,
+    // borderTopRightRadius: 25,
+    // borderBottomLeftRadius: 25,
+    // borderBottomRightRadius: 25,
+    height: "60%",
   },
   form: {
     marginHorizontal: 16,

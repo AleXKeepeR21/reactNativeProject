@@ -1,12 +1,41 @@
-// import db from "../../firebase/config";
 import { auth } from "../../firebase/config";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { authSlice } from "./authReduser";
+
+const { updateUserProfile, authStateChange, authSignOut } = authSlice.actions;
 
 export const authSignUpUser =
   ({ login, email, password }) =>
   async (dispatch, getState) => {
     try {
-      const user = await createUserWithEmailAndPassword(auth, email, password);
+      await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(auth.currentUser, {
+        displayName: login,
+      });
+
+      const { uid, displayName } = await auth.currentUser;
+      console.log(displayName, uid);
+      dispatch(
+        updateUserProfile({
+          userId: uid,
+          login: displayName,
+        })
+      );
+    } catch (error) {
+      console.log("error", error);
+      console.log("error.message", error.message);
+    }
+  };
+
+export const authSignInUser =
+  ({ email, password }) =>
+  async (dispatch, getState) => {
+    try {
+      const user = await signInWithEmailAndPassword(auth, email, password);
       console.log("user", user);
     } catch (error) {
       console.log("error", error);
@@ -14,10 +43,30 @@ export const authSignUpUser =
     }
   };
 
-// export const authSignInUser = () => async (dispatch, getState) => {};
+export const authSignOutUser = () => async (dispatch, getState) => {
+  await auth.signOut();
+  dispatch(authSignOut());
+};
 
-// export const authSignOutUser = () => async (dispatch, getState) => {};
+export const authStateChangeUser = () => async (dispatch, getState) => {
+  await auth.onAuthStateChanged((user) => {
+    if (user) {
+      dispatch(
+        authStateChange({
+          stateChange: true,
+        })
+      );
+      dispatch(
+        updateUserProfile({
+          userId: user.uid,
+          login: user.displayName,
+        })
+      );
+    }
+  });
+};
 
+///////////////////////////////////////////////////////////////////////////////////////////////
 // import { auth } from "../../firebase/config";
 // import {
 //   createUserWithEmailAndPassword,
